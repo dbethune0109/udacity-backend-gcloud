@@ -17,24 +17,70 @@
 import webapp2
 
 form="""
-<form action="/testform">
-  <input name="q">
+<form method="post">
+<br><br>
+When is your Birthday?
+<br>
+
+<label>Month
+   <input type='text' name='month'>
+</label>
+<label>Day
+   <input type='text' name='day'>
+</label>
+<label>Year
+  <input type='text' name='year'>
+</label>
+  <br <br>
   <input type="submit">
 </form>
 """
 
+months = ['Janaury',
+          'Febraury',
+          'March',
+          'April',
+          'May',
+          'June',
+          'July',
+          'August',
+          'September',
+          'October',
+          'November',
+          'December']
+
+  #MONTH FUNTION
+def valid_month(month):
+    if month:
+        cap_month = month.capitalize()
+        if cap_month in months:
+            return cap_month
+
+ #DAY FUNTION
+def valid_day(day):
+    if day and day.isdigit():
+        day = int(day)
+        if day > 0 and day <= 31:
+            return day
+
+ #YEAR FUNTION
+def valid_year(year):
+    if year and year.isdigit():
+        year = int(year)
+        if year > 1900 and year < 2020:
+            return year
+
 class MainPage(webapp2.RequestHandler):
     def get(self):
-        ##self.response.headers['Content-type']= 'text/plain'
         self.response.out.write(form)
+    def post(self):
+        user_month = valid_month(self.request.get("month"))
+        user_day = valid_day(self.request.get("day"))
+        user_year = valid_year(self.request.get("year"))
+        
+        if not (user_month and user_day and user_year):
+            self.response.out.write(form)
+        else:
+            self.response.out.write("Thats a valid day")
 
-class TestHandler(webapp2.RequestHandler):
-    def get(self):
-        ##q = self.request.get("q")
-        ##self.response.out.write(q)
-        self.response.headers['Content-type']= 'text/plain'
-        self.response.out.write(self.request)
-
-app = webapp2.WSGIApplication([('/', MainPage),
-                               ('/testform', TestHandler)],
-                              debug=True)
+app = webapp2.WSGIApplication([('/', MainPage)], debug = True)
